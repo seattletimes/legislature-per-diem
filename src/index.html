@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <%= t.include("partials/_head.html", grunt.data.json) %>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+
+    <responsive-child>
+      <main class="interactive">
+        <div class="controls">
+          <div class="button-group">
+            <input id="Senate" value="Senate" type="radio" name="chamber">
+            <label for="Senate">Senate</label>
+            <input id="House" value="House" type="radio" name="chamber">
+            <label for="House">House</label>
+            <input id="Both" value="" type="radio" name="chamber" checked>
+            <label for="Both">Both</label>
+          </div>
+
+          <div class="button-group">
+            <input id="regular" type="radio" name="session">
+            <label for="regular">Regular session</label>
+            <input id="special" type="radio" name="session">
+            <label for="special">Special session</label>
+            <input id="total" type="radio" name="session" checked>
+            <label for="total">Total</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="svg-container">
+            <div class="statewide map">
+              <%= t.include("./assets/legislativedists.svg") %>
+            </div>
+            <div class="metro map hidden">
+              <%= t.include("./assets/zoomed.svg") %>
+              <button class="close-button">
+                <svg width="1" height="1" viewbox="0 0 1 1">
+                  <line x1="0" x2="1" y1="0" y2="1"></line>
+                  <line x1="0" x2="1" y1="1" y2="0"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="details pending">
+            Select a district for more information on per diem paid out to its legislators.
+          </div>
+        </div>
+      </main>
+    </responsive-child>
+
+    <script>
+window.perdiem = <%= JSON.stringify(csv.perdiem) %>;
+    </script>
+
+    <script src="app.js" async></script>
+    <% if (json.project.production) { %>
+    <%= !json.project.embedded ? t.include("partials/_analytics.html") : "" %>
+    <%= t.include("partials/_workHere.html") %>
+    <% } %>
+  </body>
+</html>
