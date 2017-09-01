@@ -201,7 +201,7 @@ var paint = function(session, chamber) {
     var value = chamber ? district[chamber][session] : district[session];
     var elements = $(`[id="${d}"]`);
     var scaled = (value - limits.min) / (limits.max - limits.min);
-    var fill = colors.hsl(140 + scaled * 50, 20 + scaled * 30, 30 + scaled * 30);
+    var fill = colors.hsl(190 - scaled * 50, 50 - scaled * 30, 60 - scaled * 30);
     elements.forEach(el => el.style.fill = fill);
   }
   $(".district.selected").forEach(el => removeSVGClass(el, "selected"));
