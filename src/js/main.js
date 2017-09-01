@@ -123,7 +123,7 @@ var highlightDistrict = function(id) {
 </table>
   `;
   details.classList.remove("pending");
-  notes.innerHTML = window.notes[id].note ? "Note: " + window.notes[id].note : "";
+  notes.innerHTML = window.notes[id] ? "Note: " + window.notes[id].note : "";
 };
 
 // click for details
