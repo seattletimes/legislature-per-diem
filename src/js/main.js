@@ -51,6 +51,7 @@ var addSVGClass = (el, c) => el.setAttribute("class", el.getAttribute("class") +
 });
 
 var details = $.one(".details");
+var notes = $.one(".notes");
 
 //create the zoom rectangle, handle modal button
 var rectangle = dom("rect", {
@@ -122,6 +123,7 @@ var highlightDistrict = function(id) {
 </table>
   `;
   details.classList.remove("pending");
+  notes.innerHTML = window.notes[id].note ? "Note: " + window.notes[id].note : "";
 };
 
 // click for details

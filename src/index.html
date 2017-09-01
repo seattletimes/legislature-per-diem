@@ -63,14 +63,16 @@
             Select a district for more information on per diem paid out to its legislators.
           </div>
         </div>
-        <div class="notes">
-          Note: Javier Valdez and Jessyn Farrell did not serve the full legislative season.
+        <div class="notes"></div>
+        <div class="credits">
+          Thomas Wilburn / The Seattle Times
         </div>
       </main>
     </responsive-child>
 
     <script>
 window.perdiem = <%= JSON.stringify(csv.perdiem) %>;
+window.notes = <%= JSON.stringify(csv.notes) %>;
     </script>
 
     <script src="app.js" async></script>
