@@ -8,6 +8,9 @@
 
     <responsive-child>
       <main class="interactive">
+        <h1>Per diem, per district</h1>
+        <p class="chatter">
+          With state lawmakers using three special legislative sessions to finish their work this year, some House and Senate members collected more money than ever for session expenses. Lawmakers can claim up to $120 a day in per diem to help cover housing, food and other costs while in session, whether or not they are actually in Olympia. Click on the legislative districts in this map to see how much per diem each lawmaker claimed. The districts are color-coded based on total expenses claimed by all state lawmakers in the district.
         <div class="controls">
           <div class="button-group">
             <input id="Senate" value="Senate" type="radio" name="chamber">
@@ -27,6 +30,20 @@
             <label for="total">Total</label>
           </div>
         </div>
+        <div class="jump">
+          <label>Jump to district:</label>
+          <select class="district-select">
+            <option>Select a district</option>
+            <% for (var i = 1; i <= 49; i++) { %>
+            <option value="<%= i %>">District #<%= i %></option>
+            <% } %>
+          </select>
+        </div>
+        <div class="key">
+          <div class="low value">low</div>
+          <div class="scale-gradient"></div>
+          <div class="high value">high</div>
+        </div>
         <div class="row">
           <div class="svg-container">
             <div class="statewide map">
@@ -45,6 +62,9 @@
           <div class="details pending">
             Select a district for more information on per diem paid out to its legislators.
           </div>
+        </div>
+        <div class="notes">
+          Note: Javier Valdez and Jessyn Farrell did not serve the full legislative season.
         </div>
       </main>
     </responsive-child>

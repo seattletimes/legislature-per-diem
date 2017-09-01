@@ -71,7 +71,7 @@ $.one(".close-button").addEventListener("click", function() {
 });
 
 var commafy = n => {
-  var fixed = n.toFixed(2);
+  var fixed = (n * 1).toFixed(2);
   var dot = fixed.indexOf(".");
   for (var i = dot - 3; i > 0; i -= 3) {
     fixed = fixed.slice(0, i) + "," + fixed.slice(i);
@@ -79,15 +79,13 @@ var commafy = n => {
   return fixed;
 };
 
-// click for details
-delegate(svgContainer, "click", ".district", function() {
-  var id = this.getAttribute("id");
-  if (!id) return;
+var highlightDistrict = function(id) {
+  console.log(id);
   var data = districts[id];
   $(".district.selected").forEach(el => removeSVGClass(el, "selected"));
   $(`.district[id="${id}"]`).forEach(el => addSVGClass(el, "selected"));
   details.innerHTML = `
-<h2>District #${id}</h2>
+<h2>Selected: District #${id}</h2>
 <h3>Senate</h3>
 <table class="senate">
   <thead>
@@ -125,6 +123,14 @@ delegate(svgContainer, "click", ".district", function() {
 </table>
   `;
   details.classList.remove("pending");
+};
+
+// click for details
+delegate(svgContainer, "click", ".district", function() {
+  var id = this.getAttribute("id");
+  if (!id) return;
+  highlightDistrict(id);
+  selectDistrict.value = id;
 });
 
 // organize data and paint
@@ -145,15 +151,6 @@ var bounds = {
 };
 
 var districts = {};
-
-var updateDistrict = function(data, target, bounds) {
-  ["regular", "special", "total"].forEach(function(session) {
-    target[session] += data[session];
-
-    if (target[session] > bounds[session].max) bounds[session].max = target[session];
-    if (target[session] < bounds[session].min) bounds[session].min = target[session];    
-  });
-};
 
 window.perdiem.forEach(function(p) {
   if (!districts[p.district]) districts[p.district] = {
@@ -178,19 +175,36 @@ window.perdiem.forEach(function(p) {
   d[p.chamber].legislators.push(p);
 
   //chamber-specific
-  updateDistrict(p, d[p.chamber], bounds[p.chamber]);
-  //district in general
-  updateDistrict(p, d, bounds);
+  ["regular", "special", "total"].forEach(function(session) {
+    d[p.chamber][session] += p[session] || 0;
+    d[session] += p[session] || 0;
+  });
 });
+
+var updateBounds = function(data, target) {
+  ["regular", "special", "total"].forEach(function(session) {
+    if (data[session] < target[session].min) target[session].min = data[session];
+    if (data[session] > target[session].max) target[session].max = data[session];
+  });
+};
+
+for (var k in districts) {
+  var district = districts[k];
+  updateBounds(district, bounds);
+  updateBounds(district.House, bounds.House);
+  updateBounds(district.Senate, bounds.Senate);
+}
 
 var paint = function(session, chamber) {
   var limits = chamber ? bounds[chamber][session] : bounds[session];
+  $.one(".low.value").innerHTML = "$" + commafy(limits.min);
+  $.one(".high.value").innerHTML = "$" + commafy(limits.max);
   for (var d in districts) {
     var district = districts[d];
     var value = chamber ? district[chamber][session] : district[session];
     var elements = $(`[id="${d}"]`);
     var scaled = (value - limits.min) / (limits.max - limits.min);
-    var fill = colors.hsl(0 + scaled * 100, 50, 50);
+    var fill = colors.hsl(140 + scaled * 50, 20 + scaled * 30, 30 + scaled * 30);
     elements.forEach(el => el.style.fill = fill);
   }
   $(".district.selected").forEach(el => removeSVGClass(el, "selected"));
@@ -203,5 +217,14 @@ var updateControls = function() {
 };
 
 updateControls();
+
+var selectDistrict = $.one(".district-select");
+var updateJump = function() {
+  var id = selectDistrict.value;
+  if (!id) return;
+  highlightDistrict(id);
+};
+
+selectDistrict.addEventListener("change", updateJump);
 
 $.one(".controls").addEventListener("change", updateControls);
