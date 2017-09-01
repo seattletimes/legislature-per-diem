@@ -80,7 +80,6 @@ var commafy = n => {
 };
 
 var highlightDistrict = function(id) {
-  console.log(id);
   var data = districts[id];
   $(".district.selected").forEach(el => removeSVGClass(el, "selected"));
   $(`.district[id="${id}"]`).forEach(el => addSVGClass(el, "selected"));
@@ -133,22 +132,18 @@ delegate(svgContainer, "click", ".district", function() {
   selectDistrict.value = id;
 });
 
+var columns = ["regular", "special", "total"];
+
+var makeBounds = function() {
+  var b = {};
+  columns.forEach(p => b[p] = { min: Infinity, max: 0 });
+  return b;
+}
+
 // organize data and paint
-var bounds = {
-  Senate: {
-    regular: { min: Infinity, max: 0 },
-    special: { min: Infinity, max: 0 },
-    total: { min: Infinity, max: 0 }
-  },
-  House: {
-    regular: { min: Infinity, max: 0 },
-    special: { min: Infinity, max: 0 },
-    total: { min: Infinity, max: 0 }
-  },
-  regular: { min: Infinity, max: 0 },
-  special: { min: Infinity, max: 0 },
-  total: { min: Infinity, max: 0 }
-};
+var bounds = makeBounds();
+bounds.Senate = makeBounds();
+bounds.House = makeBounds();
 
 var districts = {};
 
@@ -175,14 +170,14 @@ window.perdiem.forEach(function(p) {
   d[p.chamber].legislators.push(p);
 
   //chamber-specific
-  ["regular", "special", "total"].forEach(function(session) {
+  columns.forEach(function(session) {
     d[p.chamber][session] += p[session] || 0;
     d[session] += p[session] || 0;
   });
 });
 
 var updateBounds = function(data, target) {
-  ["regular", "special", "total"].forEach(function(session) {
+  columns.forEach(function(session) {
     if (data[session] < target[session].min) target[session].min = data[session];
     if (data[session] > target[session].max) target[session].max = data[session];
   });
@@ -221,7 +216,9 @@ updateControls();
 var selectDistrict = $.one(".district-select");
 var updateJump = function() {
   var id = selectDistrict.value;
-  if (!id) return;
+  if (!id) {
+    return $(".district.selected").forEach(el => removeSVGClass(el, "selected"));
+  }
   highlightDistrict(id);
 };
 
